@@ -15,3 +15,5 @@ fish_add_path $HOME/.cargo/bin/
 fzf --fish | source
 
 zoxide init fish | source
+
+set -gx EDITOR nvim
