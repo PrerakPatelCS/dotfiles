@@ -1,0 +1,9 @@
+[manager]
+show_hidden = true
+
+[opener]
+edit = [{ run = 'nvim "$@"', block = true }]
+[plugin]
+prepend_previewers = [
+	{ mime = "text/*", run = "bat" },
+]
