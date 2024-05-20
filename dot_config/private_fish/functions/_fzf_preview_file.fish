@@ -28,7 +28,7 @@ function _fzf_preview_file --description "Print a preview for the given file bas
             # -A list hidden files as well, except for . and ..
             # -F helps classify files by appending symbols after the file name
             # command ls -A -F "$file_path"
-            command tree -C --dirsfirst -L 2 -a --filelimit=10 "$file_path"
+            command tree -C --dirsfirst -L 4 -a --filelimit=10 "$file_path"
         end
     else if test -c "$file_path"
         _fzf_report_file_type "$file_path" "character device file"

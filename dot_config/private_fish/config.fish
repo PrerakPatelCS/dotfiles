@@ -10,6 +10,7 @@ abbr --add code 'powershell.exe code'
 
 fish_add_path $HOME/.local/bin/
 fish_add_path $HOME/.cargo/bin/
+fish_add_path /usr/local/go/bin
 
 # Set up fzf key bindings
 fzf --fish | source
