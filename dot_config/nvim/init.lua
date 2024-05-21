@@ -34,22 +34,28 @@ vim.opt.showmode = false
 --  See `:help 'clipboard'`
 
 -- Just using AutoCommands g.clipboard is hard to configure
-vim.opt.clipboard = ''
+vim.opt.clipboard = 'unnamedplus'
 
---[[ -- Clipboard for WslClipboard
--- The clip.exe works perfectly just the paste doesn't work or is too slow
+-- Clipboard for WslClipboard
+-- Clip.exe sends the copy to win v and ctrl v and to the register
+-- when we paste we used to get ^M at the end so we use this function to remove it
+-- the ^M is what the windows new line delimiter was so it appears in the unix
 vim.g.clipboard = {
-  name = 'WslClipboard',
+  name = 'WSL clipboard',
   copy = {
     ['+'] = 'clip.exe',
     ['*'] = 'clip.exe',
   },
   paste = {
-    ['+'] = 'paste.exe',
-    ['*'] = 'paste.exe',
+    ['+'] = function()
+      return vim.fn.systemlist 'xsel --clipboard --output | sed -e "s/\\r//"'
+    end,
+    ['*'] = function()
+      return vim.fn.systemlist 'xsel --clipboard --output | sed -e "s/\\r//"'
+    end,
   },
   cache_enabled = 1,
-} ]]
+}
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -145,10 +151,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.highlight.on_yank()
-    -- Every time we delete or copy or change we copy it to the clip board
-    -- this will keep everything in our clipboard history
-    local yanky = vim.fn.getreg('"', 1)
-    vim.fn.system(string.format('echo %s | clip.exe', vim.fn.shellescape(yanky)))
   end,
 })
 
@@ -160,19 +162,6 @@ if not vim.loop.fs_stat(lazypath) then
   vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
-
--- Clipboard auto command to sync the clipboards on focus
--- sync with system clipboard on focus
-vim.api.nvim_create_autocmd({ 'FocusGained' }, {
-  pattern = { '*' },
-  command = [[call setreg("@", getreg("+"))]],
-})
-
--- -- sync with system clipboard on focus
--- vim.api.nvim_create_autocmd({ 'FocusLost' }, {
---   pattern = { '*' },
---   command = [[call setreg("+", getreg("@"))]],
--- })
 
 -- [[ Configure and install plugins ]]
 --
